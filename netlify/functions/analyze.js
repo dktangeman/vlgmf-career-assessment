@@ -1,10 +1,14 @@
+// Netlify Function using Netlify AI Gateway
+// Uses NETLIFY_AI_GATEWAY_KEY and NETLIFY_AI_GATEWAY_BASE_URL
+// which are ALWAYS injected by Netlify into supported runtimes
+
 const https = require('https');
 
 exports.handler = async function(event) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
     'Content-Type': 'application/json'
   };
 
@@ -12,25 +16,18 @@ exports.handler = async function(event) {
     return { statusCode: 200, headers: corsHeaders, body: '' };
   }
 
-  // Diagnostic: report what the Gateway is injecting
-  const apiKey   = process.env.ANTHROPIC_API_KEY;
-  const baseUrl  = process.env.ANTHROPIC_BASE_URL;
-  const gwKey    = process.env.NETLIFY_AI_GATEWAY_KEY;
-  const gwUrl    = process.env.NETLIFY_AI_GATEWAY_BASE_URL;
-
-  // If GET request, return diagnostic info so we can see what's injected
+  // Diagnostic GET - shows all injected vars
   if (event.httpMethod === 'GET') {
     return {
       statusCode: 200,
       headers: corsHeaders,
       body: JSON.stringify({
-        hasAnthropicKey: !!apiKey,
-        hasAnthropicBaseUrl: !!baseUrl,
-        anthropicBaseUrl: baseUrl || 'not set',
-        hasGatewayKey: !!gwKey,
-        hasGatewayUrl: !!gwUrl,
-        gatewayUrl: gwUrl || 'not set',
-        nodeVersion: process.version
+        hasAnthropicKey: !!process.env.ANTHROPIC_API_KEY,
+        hasAnthropicBaseUrl: !!process.env.ANTHROPIC_BASE_URL,
+        hasGatewayKey: !!process.env.NETLIFY_AI_GATEWAY_KEY,
+        hasGatewayBaseUrl: !!process.env.NETLIFY_AI_GATEWAY_BASE_URL,
+        gatewayBaseUrl: process.env.NETLIFY_AI_GATEWAY_BASE_URL || 'not set',
+        node: process.version
       })
     };
   }
@@ -39,29 +36,30 @@ exports.handler = async function(event) {
     return { statusCode: 405, headers: corsHeaders, body: 'Method not allowed' };
   }
 
+  // Use Gateway credentials (always injected) with fallback to ANTHROPIC_API_KEY
+  const apiKey  = process.env.NETLIFY_AI_GATEWAY_KEY || process.env.ANTHROPIC_API_KEY;
+  const baseUrl = process.env.NETLIFY_AI_GATEWAY_BASE_URL || 
+                  process.env.ANTHROPIC_BASE_URL || 
+                  'https://api.anthropic.com';
+
   if (!apiKey) {
     return {
       statusCode: 503,
       headers: corsHeaders,
-      body: JSON.stringify({
-        error: 'ANTHROPIC_API_KEY not injected by AI Gateway',
-        hasGatewayKey: !!gwKey,
-        hasGatewayUrl: !!gwUrl,
-        tip: 'AI Gateway may not be active for this function'
-      })
+      body: JSON.stringify({ error: 'No credentials available from AI Gateway or environment' })
     };
   }
 
   try {
     const requestBody = JSON.parse(event.body || '{}');
-    const url = new URL('/v1/messages', baseUrl || 'https://api.anthropic.com');
+    const url = new URL('/v1/messages', baseUrl);
+    const payload = JSON.stringify(requestBody);
 
     const responseData = await new Promise((resolve, reject) => {
-      const payload = JSON.stringify(requestBody);
       const options = {
         hostname: url.hostname,
         port: 443,
-        path: url.pathname,
+        path: url.pathname + (url.search || ''),
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +74,7 @@ exports.handler = async function(event) {
         res.on('end', () => resolve({ status: res.statusCode, body: data }));
       });
       req.on('error', reject);
-      req.setTimeout(25000, () => { req.destroy(); reject(new Error('Request timed out after 25s')); });
+      req.setTimeout(25000, () => { req.destroy(); reject(new Error('Timeout after 25s')); });
       req.write(payload);
       req.end();
     });
