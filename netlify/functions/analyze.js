@@ -1,9 +1,7 @@
 // Netlify Function using Netlify AI Gateway
 // Uses NETLIFY_AI_GATEWAY_KEY and NETLIFY_AI_GATEWAY_BASE_URL
 // which are ALWAYS injected by Netlify into supported runtimes
-
 const https = require('https');
-
 exports.handler = async function(event) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -11,11 +9,9 @@ exports.handler = async function(event) {
     'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
     'Content-Type': 'application/json'
   };
-
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers: corsHeaders, body: '' };
   }
-
   // Diagnostic GET - shows all injected vars
   if (event.httpMethod === 'GET') {
     return {
@@ -23,6 +19,7 @@ exports.handler = async function(event) {
       headers: corsHeaders,
       body: JSON.stringify({
         hasAnthropicKey: !!process.env.ANTHROPIC_API_KEY,
+        hasAnthropicKeyPlain: !!process.env.ANTHROPIC_KEY_PLAIN,
         hasAnthropicBaseUrl: !!process.env.ANTHROPIC_BASE_URL,
         hasGatewayKey: !!process.env.NETLIFY_AI_GATEWAY_KEY,
         hasGatewayBaseUrl: !!process.env.NETLIFY_AI_GATEWAY_BASE_URL,
@@ -31,17 +28,16 @@ exports.handler = async function(event) {
       })
     };
   }
-
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers: corsHeaders, body: 'Method not allowed' };
   }
-
-  // Use Gateway credentials (always injected) with fallback to ANTHROPIC_API_KEY
-  const apiKey  = process.env.NETLIFY_AI_GATEWAY_KEY || process.env.ANTHROPIC_API_KEY;
+  // Use Gateway credentials (always injected) with fallback to plain env vars
+  const apiKey  = process.env.NETLIFY_AI_GATEWAY_KEY ||
+                  process.env.ANTHROPIC_API_KEY ||
+                  process.env.ANTHROPIC_KEY_PLAIN;
   const baseUrl = process.env.NETLIFY_AI_GATEWAY_BASE_URL || 
                   process.env.ANTHROPIC_BASE_URL || 
                   'https://api.anthropic.com';
-
   if (!apiKey) {
     return {
       statusCode: 503,
@@ -49,12 +45,10 @@ exports.handler = async function(event) {
       body: JSON.stringify({ error: 'No credentials available from AI Gateway or environment' })
     };
   }
-
   try {
     const requestBody = JSON.parse(event.body || '{}');
     const url = new URL('/v1/messages', baseUrl);
     const payload = JSON.stringify(requestBody);
-
     const responseData = await new Promise((resolve, reject) => {
       const options = {
         hostname: url.hostname,
@@ -78,13 +72,11 @@ exports.handler = async function(event) {
       req.write(payload);
       req.end();
     });
-
     return {
       statusCode: responseData.status,
       headers: corsHeaders,
       body: responseData.body
     };
-
   } catch (err) {
     return {
       statusCode: 500,
