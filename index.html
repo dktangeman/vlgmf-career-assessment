@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VLGMF Career Assessment v61</title>
+<title>VLGMF Career Assessment v64</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -2190,7 +2190,7 @@ function buildFallbackData(){
 // ── JOB SEARCH LINKS ─────────────────────────────────────────────────────
 // Maps pathway titles to search terms used on ICMA Career Center and NEOGOV
 var JOB_SEARCH_TERMS = {
-  "City & County Management":              ["City Manager","Town Manager","County Administrator","Assistant City Manager","Deputy City Manager","Management Analyst","Assistant to the City Manager"],
+  "City & County Management":              ["City Manager","Town Manager","City Administrator","Town Administrator","County Administrator","County Manager","Township Manager","Township Administrator","Borough Manager","Village Manager","Village Administrator","General Manager","District Manager","Chief Administrative Officer","Assistant City Manager","Deputy City Manager","Assistant City Administrator","Management Analyst","Assistant to the City Manager"],
   "Finance & Budget":                      ["Finance Director","Budget Director","Chief Financial Officer","Budget Analyst","Financial Analyst","Finance Manager","Treasurer"],
   "Human Resources & Labor Relations":     ["Human Resources Director","HR Director","Labor Relations Manager","HR Analyst","HR Specialist","HR Manager","Personnel Director"],
   "Civil Engineering":                     ["City Engineer","Civil Engineer","Capital Projects Manager","County Engineer","Engineering Manager","Assistant City Engineer"],
@@ -2218,56 +2218,56 @@ var JOB_SEARCH_TERMS = {
 
 
 var STATE_LEAGUES = {
-  "Alabama":       {name:"Alabama League of Municipalities",              url:"https://www.alalm.org/jobs"},
-  "Alaska":        {name:"Alaska Municipal League — Classifieds",         url:"https://www.akml.org/member-services/jobs/"},
-  "Arizona":       {name:"League of Arizona Cities & Towns",              url:"https://www.azleague.org/jobs"},
-  "Arkansas":      {name:"Arkansas Municipal League",                     url:"https://www.arml.org/jobs"},
-  "California":    {name:"League of California Cities",                   url:"https://careers.cacities.org"},
-  "Colorado":      {name:"Colorado Municipal League",                     url:"https://www.cml.org/jobs"},
-  "Connecticut":   {name:"CT Town & City Management Association",         url:"https://ctcma.org/classifieds.php?type=job"},
-  "Delaware":      {name:"Delaware League of Local Governments",          url:"https://www.dllg.org"},
-  "Florida":       {name:"Florida League of Cities",                      url:"https://www.floridaleagueofcities.com/careers"},
-  "Georgia":       {name:"Georgia Municipal Association",                 url:"https://www.gacities.com/resources/career-center"},
+  "Alabama":       {name:"Alabama League of Municipalities",              url:"https://almonline.org/Classifieds.aspx"},
+  "Alaska":        {name:"Alaska Municipal League — Classifieds",         url:"https://www.akml.org/classifieds/"},
+  "Arizona":       {name:"League of Arizona Cities & Towns",              url:"https://www.azleague.org/Jobs.aspx"},
+  "Arkansas":      {name:"Arkansas Municipal League",                     url:"https://www.armunileague.org/classifieds/"},
+  "California":    {name:"CalOpps \u2014 California Public Sector Jobs",       url:"https://www.calopps.org/job-search"},
+  "Colorado":      {name:"Colorado Municipal League",                     url:"https://www.cml.org/utility-pages/job-board"},
+  "Connecticut":   {name:"CT Conference of Municipalities \u2014 Career Center", url:"https://www.ccm-ct.org/Municipal-Career-Center/Current-Opportunities"},
+  "Delaware":      {name:"Delaware Government Jobs",                      url:"https://www.govtjobs.com/states/delaware-government-jobs/"},
+  "Florida":       {name:"FLCityJobs \u2014 Florida League of Cities",         url:"https://www.flcityjobs.com/"},
+  "Georgia":       {name:"GLGA Marketplace \u2014 GA Municipal Association",    url:"https://www.glga.org/"},
   "Hawaii":        {name:"Hawaii State Association of Counties",          url:"https://www.governmentjobs.com/jobs?location=Hawaii"},
-  "Idaho":         {name:"Association of Idaho Cities",                   url:"https://www.idahocities.org/jobs"},
-  "Illinois":      {name:"Illinois Municipal League",                     url:"https://www.iml.org/jobs"},
-  "Indiana":       {name:"Indiana Association of Cities & Towns",         url:"https://www.citiesandtowns.org/jobs"},
-  "Iowa":          {name:"Iowa League of Cities",                         url:"https://www.iowaleague.org/jobs"},
-  "Kansas":        {name:"League of Kansas Municipalities",               url:"https://www.lkm.org/jobs"},
-  "Kentucky":      {name:"Kentucky League of Cities",                     url:"https://www.klc.org/jobs"},
-  "Louisiana":     {name:"Louisiana Municipal Association",               url:"https://www.lma.org/jobs"},
-  "Maine":         {name:"Maine Municipal Association",                   url:"https://www.memun.org/jobs"},
-  "Maryland":      {name:"Maryland Municipal League",                     url:"https://www.mdmunicipal.org/jobs"},
+  "Idaho":         {name:"Association of Idaho Cities",                   url:"https://idahocities.org/networking/opening_search.asp"},
+  "Illinois":      {name:"Illinois Municipal League",                     url:"https://www.iml.org/recruit"},
+  "Indiana":       {name:"Aim \u2014 Accelerate Indiana Municipalities",       url:"https://aimindiana.org/comms/municipal-jobs/"},
+  "Iowa":          {name:"Iowa League of Cities",                         url:"https://iowaleague.org/classifieds/"},
+  "Kansas":        {name:"Kansas Government Jobs",                        url:"https://www.govtjobs.com/states/kansas-government-jobs/"},
+  "Kentucky":      {name:"Kentucky League of Cities",                     url:"https://www.klc.org/Classifieds/"},
+  "Louisiana":     {name:"Louisiana Government Jobs",                     url:"https://www.govtjobs.com/states/louisiana-government-jobs/"},
+  "Maine":         {name:"Maine Municipal Association",                   url:"https://www.memun.org/Municipal-Career-Center"},
+  "Maryland":      {name:"MD Municipal Careers Job Board",                url:"https://mml.mcjobboard.net/"},
   "Massachusetts": {name:"Massachusetts Municipal Association — Job Ads", url:"https://www.mma.org/municipal-marketplace/job-ads/"},
-  "Michigan":      {name:"Michigan Municipal League",                     url:"https://www.mml.org/jobs"},
-  "Minnesota":     {name:"League of Minnesota Cities",                    url:"https://www.lmc.org/jobs"},
-  "Mississippi":   {name:"Mississippi Municipal League",                  url:"https://www.mmlonline.com/jobs"},
-  "Missouri":      {name:"Missouri Municipal League",                     url:"https://www.mocities.com/jobs"},
-  "Montana":       {name:"Montana League of Cities & Towns",              url:"https://www.mtleague.org/jobs"},
-  "Nebraska":      {name:"League of Nebraska Municipalities",             url:"https://www.lonm.org/jobs"},
-  "Nevada":        {name:"Nevada League of Cities & Municipalities",      url:"https://www.nvleague.org/jobs"},
-  "New Hampshire": {name:"NH Municipal Association",                      url:"https://www.nhmunicipal.org/jobs"},
-  "New Jersey":    {name:"New Jersey League of Municipalities",           url:"https://www.njlm.org/jobs"},
-  "New Mexico":    {name:"New Mexico Municipal League",                   url:"https://www.nmml.org/jobs"},
-  "New York":      {name:"New York Conference of Mayors",                 url:"https://www.nycom.org/jobs"},
+  "Michigan":      {name:"Michigan Municipal League Classifieds",         url:"https://classifieds.mml.org/jobs/"},
+  "Minnesota":     {name:"League of Minnesota Cities",                    url:"https://www.lmc.org/careers/"},
+  "Mississippi":   {name:"Mississippi Municipal League",                  url:"https://www.mmlonline.com/job-opportunities/"},
+  "Missouri":      {name:"Missouri Municipal League",                     url:"https://www.mocities.com/Web/Web/Resources/Job-Postings-Classifieds.aspx"},
+  "Montana":       {name:"Montana League of Cities & Towns",              url:"https://mtleague.org/job-board"},
+  "Nebraska":      {name:"League of Nebraska Municipalities",             url:"https://www.lonm.org/classifieds/careers.html"},
+  "Nevada":        {name:"Nevada League of Cities & Municipalities",      url:"https://nvleague.com/job-opportunities/"},
+  "New Hampshire": {name:"NH Municipal Association",                      url:"https://www.nhmunicipal.org/classifieds"},
+  "New Jersey":    {name:"New Jersey League of Municipalities",           url:"https://www.njlm.org/Jobs.aspx"},
+  "New Mexico":    {name:"New Mexico Municipal League",                   url:"https://www.nmml.org/Jobs.aspx"},
+  "New York":      {name:"New York Conference of Mayors",                 url:"https://www.nycom.org/programs-services/classifieds.html?type=job"},
   "North Carolina":{name:"NC League of Municipalities — Job Board",       url:"https://www.nclm.org/city-job-board/"},
-  "North Dakota":  {name:"North Dakota League of Cities",                 url:"https://www.ndlc.org/jobs"},
+  "North Dakota":  {name:"North Dakota League of Cities",                 url:"https://www.ndlc.org/Jobs.aspx"},
   "Ohio":          {name:"Ohio City & County Management Association",     url:"https://www.ocmaohio.org/jobs/"},
-  "Oklahoma":      {name:"Oklahoma Municipal League",                     url:"https://www.oml.org/jobs"},
+  "Oklahoma":      {name:"Oklahoma Municipal League",                     url:"https://www.oml.org/classifieds-1"},
   "Oregon":        {name:"League of Oregon Cities",                       url:"https://www.orcities.org/jobs"},
-  "Pennsylvania":  {name:"Pennsylvania Municipal League",                 url:"https://www.pml.org/jobs"},
-  "Rhode Island":  {name:"RI League of Cities & Towns — Job Board",       url:"https://rileague.org/networking/opening_search.asp"},
-  "South Carolina":{name:"Municipal Association of South Carolina",       url:"https://www.masc.sc/jobs"},
-  "South Dakota":  {name:"South Dakota Municipal League",                 url:"https://www.sdmunicipalleague.org/jobs"},
-  "Tennessee":     {name:"Tennessee Municipal League",                    url:"https://www.tml1.org/jobs"},
+  "Pennsylvania":  {name:"PA Municipal League \u2014 Job Junction+",           url:"https://www.pml.org/programs-and-services/municipal-job-junction-mjj/"},
+  "Rhode Island":  {name:"RI League of Cities & Towns — Job Board",       url:"https://www.rileague.org/jobs"},
+  "South Carolina":{name:"Municipal Association of South Carolina",       url:"https://www.masc.sc/classifieds/job-openings"},
+  "South Dakota":  {name:"South Dakota Municipal League",                 url:"https://sdmunicipalleague.org/networking/"},
+  "Tennessee":     {name:"Tennessee Municipal League",                    url:"https://www.tml1.org/employment-opportunity"},
   "Texas":         {name:"Texas Municipal League",                        url:"https://www.tml.org/jobs"},
-  "Utah":          {name:"Utah League of Cities & Towns",                 url:"https://www.ulct.org/jobs"},
-  "Vermont":       {name:"Vermont League of Cities & Towns",              url:"https://www.vlct.org/jobs"},
+  "Utah":          {name:"Utah League of Cities & Towns \u2014 Job Bank",      url:"https://www.ulct.org/member-services/ulct-job-bank"},
+  "Vermont":       {name:"Vermont League of Cities & Towns",              url:"https://www.vlct.org/classifieds"},
   "Virginia":      {name:"Virginia Municipal League",                     url:"https://www.vml.org/jobs"},
-  "Washington":    {name:"Association of Washington Cities",              url:"https://www.awcnet.org/jobs"},
-  "West Virginia": {name:"West Virginia Municipal League",                url:"https://www.wvml.org/jobs"},
+  "Washington":    {name:"AWC JobNet \u2014 Association of WA Cities",         url:"https://jobnet.wacities.org/"},
+  "West Virginia": {name:"West Virginia Municipal League",                url:"https://www.wvml.org/resources/league-classifieds"},
   "Wisconsin":     {name:"League of Wisconsin Municipalities",            url:"https://www.lwm-info.org/jobs"},
-  "Wyoming":       {name:"Wyoming Association of Municipalities",         url:"https://www.wyomuni.org/jobs"},
+  "Wyoming":       {name:"Wyoming Association of Municipalities",         url:"https://wyomuni.org/municipal-jobs/"},
   "District of Columbia":{name:"DC Government Jobs",                      url:"https://www.governmentjobs.com/jobs?location=Washington+DC"}
 };
 
@@ -2338,7 +2338,11 @@ function buildJobLinks(pathwayTitle, state) {
   }
 
   html += '</div>';
-  html += '<div class="job-links-note"><strong>GovernmentJobs.com</strong> opens pre-filtered to ' + esc(state) + '. <strong>ICMA Job Center</strong> is a national board &mdash; on the page, type &ldquo;' + esc(primary) + '&rdquo; and select ' + esc(state) + ' in the location filter. <strong>' + esc(league ? league.name : "State league") + '</strong> shows ' + esc(state) + ' local government openings. Listings update daily.</div>';
+  var titleTip = '';
+  if (pathwayTitle && pathwayTitle.indexOf("City & County Management") >= 0) {
+    titleTip = ' Depending on the state, this role may be titled City Manager, Town Manager, City/Town Administrator, County Manager/Administrator, Township Manager, Borough Manager, Village Manager, General Manager, District Manager, or Chief Administrative Officer &mdash; try these variations too if the search above comes up short.';
+  }
+  html += '<div class="job-links-note"><strong>GovernmentJobs.com</strong> opens pre-filtered to ' + esc(state) + '. <strong>ICMA Job Center</strong> is a national board &mdash; on the page, type &ldquo;' + esc(primary) + '&rdquo; and select ' + esc(state) + ' in the location filter. <strong>' + esc(league ? league.name : "State league") + '</strong> shows ' + esc(state) + ' local government openings. Listings update daily.' + titleTip + '</div>';
   html += '</div>';
   return html;
 }
