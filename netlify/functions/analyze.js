@@ -24,6 +24,7 @@ exports.handler = async function(event) {
         hasGatewayKey: !!process.env.NETLIFY_AI_GATEWAY_KEY,
         hasGatewayBaseUrl: !!process.env.NETLIFY_AI_GATEWAY_BASE_URL,
         gatewayBaseUrl: process.env.NETLIFY_AI_GATEWAY_BASE_URL || 'not set',
+        testVar: process.env.TEST_VAR || 'not set',
         node: process.version
       })
     };
