@@ -23,7 +23,7 @@ exports.handler = async function (event) {
     };
   }
 
-  const store = getStore({ name: 'vlgmf-jobs', consistency: 'strong' });
+  const store = getStore({ name: 'vlgmf-jobs' });
 
   try {
     const job = await store.get(jobId, { type: 'json' });
