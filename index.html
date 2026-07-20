@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VLGMF Career Assessment v59</title>
+<title>VLGMF Career Assessment v60</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -628,7 +628,8 @@ var MARKET_DB={
 var STEPS=[
   {id:"s1",section:"About You",icon:"01",questions:[
     {id:"name",type:"text",label:"Your full name"},
-    {id:"state",type:"select",text:"State where you plan to work in local government",opts:["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","Not sure yet"]},
+    {id:"state",type:"select",text:"Primary state where you plan to work in local government",opts:["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","Not sure yet"]},
+    {id:"state2",type:"select",optional:true,text:"Second state you would also consider (optional)",hint:"Your report will include job openings for both states you select.",opts:["None \u2014 only interested in my primary state","Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]},
     {id:"pop",type:"single",text:"What size jurisdiction interests you most?",opts:["Small town or village (under 10,000)","Small city or town (10,000\u201350,000)","Mid-size city or county (50,000\u2013250,000)","Large city or county (250,000+)","Open to any size","Not sure yet"]}
   ]},
   {id:"s2",section:"Military Service",icon:"02",questions:[
@@ -727,9 +728,10 @@ function renderStep(){
       var v=esc(ans[q.id]||"");
       html+='<label class="field-label" for="fi_'+q.id+'">'+esc(q.label)+'</label><input class="text-field" id="fi_'+q.id+'" type="text" value="'+v+'" placeholder="Type here\u2026"/>';
     }else if(q.type==="select"){
-      html+='<div class="q-label">'+esc(q.text)+'</div>';
+      html+='<div class="q-label">'+esc(q.text)+(q.optional?'<span class="opt-badge">OPTIONAL</span>':'')+'</div>';
+      if(q.hint){html+='<div class="q-hint">'+esc(q.hint)+'</div>';}
       html+='<select class="select-field" onchange="pickSel(\''+q.id+'\',this)">';
-      html+='<option value="">Select your state\u2026</option>';
+      html+='<option value="">'+esc(q.optional?"None selected\u2026":"Select\u2026")+'</option>';
       q.opts.forEach(function(o){
         html+='<option value="'+esc(o)+'"'+(ans[q.id]===o?" selected":"")+'>'+esc(o)+'</option>';
       });
@@ -823,7 +825,8 @@ function validate(){
     var q=STEPS[step].questions[i];
     if(q.type==="text"&&!(ans[q.id]||"").trim()){showErr("Please complete: "+q.label);return false;}
     if(q.type==="single"&&!ans[q.id]){showErr("Please select an answer for: "+q.text);return false;}
-    if(q.type==="select"&&!ans[q.id]){showErr("Please select: "+q.text);return false;}
+    if(q.type==="select"&&!q.optional&&!ans[q.id]){showErr("Please select: "+q.text);return false;}
+    if(q.id==="state2"&&ans.state2&&ans.state2.indexOf("None")===0){ans.state2="";}
   }
   return true;
 }
@@ -905,10 +908,13 @@ function showLoading(){
     "Mapping your military experience to 24 local government career pathways\u2026",
     "Reading your resume and identifying actual roles held\u2026",
     "Scoring qualification fit and checking labor market data\u2026",
-    "Generating your personalized career and credential report\u2026"
+    "This can take up to a minute for a full resume-enhanced report \u2014 please don't close this page\u2026",
+    "Generating your personalized career and credential report\u2026",
+    "Almost there \u2014 finalizing your rankings and certification pathways\u2026"
   ];
   var i=0;
-  var t=setInterval(function(){i=(i+1)%msgs.length;document.getElementById("loading-sub").textContent=msgs[i];},2800);
+  document.getElementById("loading-sub").textContent=msgs[0];
+  var t=setInterval(function(){i=(i+1)%msgs.length;document.getElementById("loading-sub").textContent=msgs[i];},4200);
   return t;
 }
 
@@ -1170,28 +1176,63 @@ if(resumeFacts.hasCityManager && parsed.pathways) {
 }
 }
 
+function genJobId(){
+  return "job_"+Date.now()+"_"+Math.random().toString(36).substring(2,10);
+}
+
+// Polls the check-status function until the background analysis finishes,
+// fails, or the wait exceeds maxWaitMs. Returns the raw Anthropic response
+// text, exactly as the old synchronous /analyze endpoint used to.
+async function pollForResult(jobId,_debugInfo,maxWaitMs){
+  var intervalMs=2500;
+  var waited=0;
+  while(waited<maxWaitMs){
+    await new Promise(function(res){setTimeout(res,intervalMs);});
+    waited+=intervalMs;
+    var poll=await fetch("/.netlify/functions/check-status?id="+encodeURIComponent(jobId));
+    if(!poll.ok){
+      // transient error polling — keep trying until maxWaitMs
+      continue;
+    }
+    var pj=await poll.json();
+    if(pj.status==="done"){
+      _debugInfo.status="HTTP 200 (background)";
+      return pj.rawText;
+    }
+    if(pj.status==="error"){
+      _debugInfo.status="Background job error";
+      _debugInfo.error=pj.error||"Unknown background error";
+      throw new Error(pj.error||"Background analysis failed");
+    }
+    // status === "pending" — keep polling
+  }
+  throw new Error("Timed out waiting for analysis after "+Math.round(maxWaitMs/1000)+"s");
+}
+
 async function runAnalysis(){
   var t=showLoading();
   var _debugInfo={status:"",error:"",resp:""};
   try{
-    var resp=await fetch("/.netlify/functions/analyze",{
+    var jobId=genJobId();
+    var startResp=await fetch("/.netlify/functions/analyze-background",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
+        jobId:jobId,
         model:"claude-sonnet-4-6",
         max_tokens:8000,
         system:"You are a senior local government career advisor for the VLGMF fellowship. Your most critical rule: when a resume is provided, it is the PRIMARY and AUTHORITATIVE source. If the resume shows the person has held City Manager, Town Manager, County Administrator, CAO, or any equivalent senior executive role, you MUST mark those positions and all lower-level positions as realistic=true. A person who has served as City Manager for 10 years is IMMEDIATELY competitive for City Manager roles today — mark City Manager as realistic=true level=Senior. NEVER mark any role as realistic=false if the resume shows the person already holds or has held that role or a more senior equivalent. Dropdowns reflect military background only and do not override resume evidence. Return ONLY valid JSON with no markdown.",
         messages:[{role:"user",content:buildPrompt()}]
       })
     });
-    _debugInfo.status="HTTP "+resp.status;
-    var rawText=await resp.text();
+    if(!startResp.ok && startResp.status!==202){
+      var startErrTxt=await startResp.text();
+      throw new Error("Could not start analysis: HTTP "+startResp.status+": "+startErrTxt.substring(0,200));
+    }
+    // Poll for up to 100 seconds — background function itself can run far longer if needed
+    var rawText=await pollForResult(jobId,_debugInfo,100000);
     _debugInfo.resp=rawText.substring(0,300);
     clearInterval(t);
-    if(!resp.ok){
-      _debugInfo.error="API rejected request";
-      throw new Error("HTTP "+resp.status+": "+rawText.substring(0,200));
-    }
     var data=JSON.parse(rawText);
     var txt=(data.content||[]).map(function(x){return x.text||"";}).join("\n");
     var parsed;
@@ -1365,7 +1406,7 @@ function buildPrompt(){
   }
 
   lines.push("VETERAN PROFILE (from dropdown answers):");
-  lines.push("Name: "+(a.name||"Fellow")+" | State: "+(a.state||"Not specified")+" | Jurisdiction preference: "+a.pop);
+  lines.push("Name: "+(a.name||"Fellow")+" | Primary state: "+(a.state||"Not specified")+(a.state2?" | Also considering: "+a.state2:"")+" | Jurisdiction preference: "+a.pop);
   lines.push("Branch: "+a.branch+" | Rank: "+a.rank+" | Service: "+a.yrs);
   lines.push("Primary occupational specialty / rate / AFSC: "+a.mos+" | Largest unit led: "+a.scope);
   lines.push("Budget: "+a.budget+" | Projects: "+a.proj+" | HR: "+a.hr+" | IT/Cyber: "+a.it);
@@ -2384,9 +2425,12 @@ function renderReport(data){
     html+='<div class="pw-section"><div class="pw-sec-title">General qualifications employers require</div><ul class="blist qual">'+qH+"</ul></div>";
     html+='<div class="pw-section"><div class="pw-sec-title">What you would be responsible for</div><ul class="blist resp">'+rH+"</ul></div>";
     html+='<div class="pw-section"><div class="pw-sec-title">Recommended certifications &#8212; requirements &amp; where to obtain</div><div class="cert-list">'+cH+'</div><p style="font-size:11px;color:var(--slate-light);margin-top:8px">Entry timeline: '+esc(p.entry_timeline||"")+'. Always verify current eligibility requirements directly with the certifying body before applying.</p></div>';
-    // Job search links (visible on screen, hidden in print)
+    // Job search links (visible on screen, hidden in print) — up to two states
     if(ans && ans.state) {
       html += buildJobLinks(p.title, ans.state);
+    }
+    if(ans && ans.state2 && ans.state2 !== ans.state) {
+      html += buildJobLinks(p.title, ans.state2);
     }
     html+="</div></div>";
   });
