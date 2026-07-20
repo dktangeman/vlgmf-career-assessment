@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VLGMF Career Assessment v65</title>
+<title>VLGMF Career Assessment v67</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -425,7 +425,7 @@ body{font-family:"Segoe UI",system-ui,sans-serif;color:var(--navy);background:va
         <div style="margin-top:4px;display:flex;justify-content:space-between;align-items:center">
           <span id="ph-name" style="font-size:10pt;font-weight:700;color:#fff"></span>
           <span id="ph-meta" style="font-size:7.5pt;color:rgba(255,255,255,0.6)"></span>
-          <span style="font-size:8pt;font-weight:700;color:rgba(255,255,255,0.6)">V59</span>
+          <span style="font-size:8pt;font-weight:700;color:rgba(255,255,255,0.6)">V67</span>
         </div>
       </div>
     </div>
@@ -782,7 +782,7 @@ function renderStep(){
     html+="</div>";
   });
   if(step===STEPS.length-1){
-    html+='<div style="margin-top:4px;padding:12px 14px;background:#fff8e1;border:1px solid #f0d78c;border-radius:8px;font-size:12.5px;color:#7a5c00;line-height:1.5"><strong>Before you click Generate:</strong> building your full resume-enhanced report can take up to a minute. Please stay on this page until it finishes \u2014 don\u2019t refresh or close the tab.</div>';
+    html+='<div style="margin-top:4px;padding:12px 14px;background:#fff8e1;border:1px solid #f0d78c;border-radius:8px;font-size:12.5px;color:#7a5c00;line-height:1.5"><strong>Before you click Generate:</strong> building your full resume-enhanced report can take up to two to three minutes. Please stay on this page until it finishes \u2014 don\u2019t refresh or close the tab.</div>';
   }
   html+="</div></div>";
   document.getElementById("question-area").innerHTML=html;
@@ -909,7 +909,7 @@ function showLoading(){
   document.getElementById("progress-strip").style.display="none";
   document.getElementById("loading-wrap").classList.add("show");
   var msgs=[
-    "This can take up to a minute for a full resume-enhanced report \u2014 please don't close this page\u2026",
+    "This can take two to three minutes for a full resume-enhanced report \u2014 please don't close this page\u2026",
     "Mapping your military experience to 24 local government career pathways\u2026",
     "Reading your resume and identifying actual roles held\u2026",
     "Scoring qualification fit and checking labor market data\u2026",
@@ -923,6 +923,9 @@ function showLoading(){
 }
 
 function runPostProcessing(parsed){
+  // Defensive guard: if the AI response was malformed (e.g. literally JSON "null"),
+  // there's nothing to post-process. Return early rather than crashing.
+  if(!parsed) return;
 
   // ── LAYER 1: Augment resumeFacts using dropdown answers ──────────────
   // This fires even if resume wasn't uploaded or failed to parse
@@ -1233,8 +1236,11 @@ async function runAnalysis(){
       var startErrTxt=await startResp.text();
       throw new Error("Could not start analysis: HTTP "+startResp.status+": "+startErrTxt.substring(0,200));
     }
-    // Poll for up to 100 seconds — background function itself can run far longer if needed
-    var rawText=await pollForResult(jobId,_debugInfo,100000);
+    // Poll for up to 3 minutes — comfortably longer than the background
+    // function's own 170s call timeout, so we never give up right as the
+    // server-side call is about to succeed. Background functions themselves
+    // can run far longer (up to 15 min) if ever needed.
+    var rawText=await pollForResult(jobId,_debugInfo,190000);
     _debugInfo.resp=rawText.substring(0,300);
     clearInterval(t);
     var data=JSON.parse(rawText);
@@ -1259,11 +1265,19 @@ async function runAnalysis(){
         parsed=getFallback();
       }
     }
+    // Guard against a technically-valid-JSON-but-useless response (e.g. the AI
+    // returned the literal value null, or an object with no pathways at all).
+    if(!parsed || !parsed.pathways || !parsed.pathways.length){
+      parsed=getFallback();
+    }
     if(parsed&&parsed.pathways){
       parsed.pathways.sort(function(a,b){return b.fit_score-a.fit_score;});
       if(parsed.pathways.length>5) parsed.pathways=parsed.pathways.slice(0,5);
       parsed.pathways.forEach(function(p,i){p.rank=i+1;});
     }
+    // Never trust the AI's self-reported date — it has no real-time clock and will
+    // guess based on training data. Always use the actual current date instead.
+    if(parsed) parsed.date=new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});
     runPostProcessing(parsed);
     reportData=parsed;
     renderReport(parsed);
@@ -1456,7 +1470,7 @@ function buildPrompt(){
   lines.push("QUALIFICATION NOTE: Experience, education, and certifications are the PRIMARY scoring factors (70% weight). Work environment preference, work style, and career horizon are SECONDARY factors (30% weight) used to differentiate between similarly-qualified pathways and to order results when fit scores are close. A veteran with a PE license and 20 years of engineering experience ranks Civil Engineering #1 regardless of stated preferences. But if a logistics veteran scores similarly on Fleet Management AND Procurement, their stated preference for field vs. office work should determine the order.");
   lines.push("{");
   lines.push('  "name": "string",');
-  lines.push('  "date": "string (today as Month DD YYYY)",');
+  lines.push('  "date": "string (leave as empty string \\"\\" \\u2014 the app fills this in with the real current date)",');
   lines.push('  "headline": "string (1 sentence max 15 words, active voice; if resume provided use most senior actual title held)",');
   lines.push('  "profile_summary": "string (3-5 sentences. Synthesize who this person is as a candidate: military background, career highlights, strengths, and what makes them compelling for local government. Write in third person, professional tone. Reference actual resume facts if provided.)",');
   lines.push('  "special_note": "string or null (if person has already served as city manager or senior executive, acknowledge it and advise on next steps: larger jurisdictions, ICMA-CM path, interim or consulting opportunities; otherwise standard city manager guidance if applicable; null if not relevant)",');
