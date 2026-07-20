@@ -50,7 +50,7 @@ function callAnthropic(apiKey, baseUrl, requestBody) {
 
 exports.handler = async function (event) {
   connectLambda(event);
-  const store = getStore({ name: 'vlgmf-jobs', consistency: 'strong' });
+  const store = getStore({ name: 'vlgmf-jobs' });
 
   let body;
   try {
