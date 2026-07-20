@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VLGMF Career Assessment v64</title>
+<title>VLGMF Career Assessment v65</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1316,63 +1316,6 @@ function buildPrompt(){
     if(resumeFacts.hasCityEngineer) {
       lines.push("REALISM OVERRIDE: This person HAS SERVED as City/County Engineer or Public Works Director. Those roles MUST be marked realistic=true.");
     }
-    // Civil Affairs realism override — they should see City Management as immediately competitive
-  if(resumeFacts.hasCivilAffairs && parsed.pathways) {
-    parsed.pathways.forEach(function(p){
-      if(/city|county management/i.test(p.title||"")){
-        if(p.qualified_positions){
-          p.qualified_positions.forEach(function(pos){
-            var t=(pos.title||"").toLowerCase();
-            if(t.indexOf("assistant")>=0||t.indexOf("management analyst")>=0||
-               t.indexOf("deputy")>=0||t.indexOf("manager")>=0){
-              pos.realistic=true;
-            }
-          });
-        }
-      }
-    });
-  }
-  // Water/Utilities specialist realism override
-  if((resumeFacts.hasWaterUtilities||resumeFacts.hasEnvironmental) && parsed.pathways) {
-    parsed.pathways.forEach(function(p){
-      if(/water|utilities/i.test(p.title||"")){
-        if(p.qualified_positions) p.qualified_positions.forEach(function(pos){
-          var t=(pos.title||"").toLowerCase();
-          if(t.indexOf("superintendent")>=0||t.indexOf("operator")>=0||t.indexOf("coordinator")>=0){
-            pos.realistic=true;
-          }
-        });
-      }
-    });
-  }
-  // Paralegal/Records/Admin specialist realism override
-  if((resumeFacts.hasParalegalRecords||resumeFacts.hasAdminRecords) && parsed.pathways) {
-    parsed.pathways.forEach(function(p){
-      if(/clerk|records/i.test(p.title||"")){
-        if(p.qualified_positions) p.qualified_positions.forEach(function(pos){
-          var t=(pos.title||"").toLowerCase();
-          if(t.indexOf("clerk")>=0||t.indexOf("records")>=0||t.indexOf("deputy")>=0){
-            pos.realistic=true;
-          }
-        });
-      }
-    });
-  }
-  // HR Director realism override
-  if(resumeFacts.hasHRDirector && parsed.pathways) {
-    parsed.pathways.forEach(function(p){
-      if((p.title||"").toLowerCase().indexOf("human resources")>=0){
-        if(p.qualified_positions){
-          p.qualified_positions.forEach(function(pos){
-            var t=(pos.title||"").toLowerCase();
-            if(t.indexOf("hr")>=0||t.indexOf("human")>=0||t.indexOf("personnel")>=0||t.indexOf("labor")>=0){
-              pos.realistic=true;
-            }
-          });
-        }
-      }
-    });
-  }
   if(resumeFacts.hasCIO) {
       lines.push("REALISM OVERRIDE: This person HAS SERVED as CIO or IT Director. Those roles MUST be marked realistic=true.");
     }
