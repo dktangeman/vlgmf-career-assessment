@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VLGMF Career Assessment v60</title>
+<title>VLGMF Career Assessment v61</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -626,39 +626,42 @@ var MARKET_DB={
 
 
 var STEPS=[
-  {id:"s1",section:"About You",icon:"01",questions:[
+  {id:"s0",section:"Resume Upload",icon:"01",questions:[
+    {id:"resume",type:"resume",label:"Upload your resume for richer analysis"}
+  ]},
+  {id:"s1",section:"About You",icon:"02",questions:[
     {id:"name",type:"text",label:"Your full name"},
     {id:"state",type:"select",text:"Primary state where you plan to work in local government",opts:["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","Not sure yet"]},
     {id:"state2",type:"select",optional:true,text:"Second state you would also consider (optional)",hint:"Your report will include job openings for both states you select.",opts:["None \u2014 only interested in my primary state","Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]},
     {id:"pop",type:"single",text:"What size jurisdiction interests you most?",opts:["Small town or village (under 10,000)","Small city or town (10,000\u201350,000)","Mid-size city or county (50,000\u2013250,000)","Large city or county (250,000+)","Open to any size","Not sure yet"]}
   ]},
-  {id:"s2",section:"Military Service",icon:"02",questions:[
+  {id:"s2",section:"Military Service",icon:"03",questions:[
     {id:"branch",type:"single",text:"Branch of service",opts:["Army","Navy","Marine Corps","Air Force","Space Force","Coast Guard","National Guard / Reserve","Multiple branches"]},
     {id:"rank",type:"single",text:"Highest rank achieved",opts:["E-1 to E-4 (Junior Enlisted)","E-5 to E-6 (NCO)","E-7 to E-9 (Senior NCO / Sergeant Major / Master Chief / Chief Master Sergeant)","W-1 to W-3 (Warrant Officer)","W-4 to W-5 (Senior Warrant)","O-1 to O-3 (Company Grade Officer)","O-4 to O-5 (Field Grade Officer)","O-6 (Colonel / Captain)","O-7 to O-10 (General / Flag Officer)"]},
     {id:"yrs",type:"single",text:"Total years of military service",opts:["Less than 4 years","4\u20138 years","9\u201315 years","16\u201320 years","21\u201325 years","26+ years"]}
   ]},
-  {id:"s3",section:"Military Function",icon:"03",questions:[
+  {id:"s3",section:"Military Function",icon:"04",questions:[
     {id:"mos",type:"single",text:"Which best describes your primary occupational specialty or functional area?",opts:["Combat Arms, Special Operations, or Infantry (Infantry, Special Forces, SEALs, Raiders, MARSOC, AFSOC, etc.)","Aviation (fixed-wing or rotary)","Engineering, Construction, or Civil Engineering (Army Engineers, Seabees, RED HORSE, etc.)","Signal, Cyber, Communications, IT","Intelligence, Geospatial, Targeting","Finance, Comptroller, Resource Management","Logistics, Supply Chain, Transportation","Medical, Nursing, Public Health","Legal, JAG, Paralegal","Human Resources, Personnel, Administration","Public Affairs, Information Operations","Civil Affairs (CMO, CIMIC, Provincial Reconstruction)","Military Police, Security Forces, Investigations","Fire/Emergency Services, CBRN, Safety","Operations, Planning, Strategy (Staff)","Contracting, Acquisition","Other / Multiple"]},
     {id:"scope",type:"single",text:"Largest unit or team you directly led or managed",hint:"Equivalents shown across branches \u2014 Army/USMC \u00b7 Air Force/Space Force \u00b7 Navy/Coast Guard",opts:["Individual contributor or small team (1\u201310)","Squad / section \u00b7 Flight \u00b7 division afloat or watch section (10\u201340)","Company / battery / troop \u00b7 Squadron \u00b7 department afloat (40\u2013200)","Battalion / squadron (cavalry) \u00b7 Group \u00b7 major afloat command (200\u2013800)","Brigade / regiment \u00b7 Wing \u00b7 strike group or district (800\u20134,000)","Division / corps \u00b7 Numbered Air Force / MAJCOM \u00b7 fleet or installation (4,000+)"]}
   ]},
-  {id:"s4",section:"Functional Experience",icon:"04",questions:[
+  {id:"s4",section:"Functional Experience",icon:"05",questions:[
     {id:"budget",type:"single",text:"Budget or resource management experience",hint:"This captures management scope — most officers carry budget authority as part of command. Only the final option signals Finance specialization.",opts:["None","Managed unit supply/equipment accounts","Developed or executed unit/program budgets","Responsible for significant budgets ($1M\u2013$10M)","Responsible for large budgets ($10M+)","Formal comptroller, resource manager, or finance officer role"]},
     {id:"proj",type:"single",text:"Project or capital program management",opts:["None","Managed small unit projects or improvements","Led construction, facility, or installation projects","Managed programs with contractor/vendor involvement","Managed large-scale capital or acquisition programs ($5M+)"]},
     {id:"hr",type:"single",text:"Human resources or personnel management",opts:["None","Basic personnel administration","Supervised staff performance, discipline, and development","Managed personnel / manpower department operations (S1/G1/N1/A1 equivalent)","Formal HR or manpower officer/NCO role"]},
     {id:"it",type:"single",text:"IT, cybersecurity, or geospatial experience",opts:["None","Basic user and office technology","Managed IT systems or networks","Cybersecurity or information assurance role","GIS, geospatial, or SIGINT specialist","CIO, J6/J2/N6/A6, or senior IT leadership role"]}
   ]},
-  {id:"s5",section:"Functional Experience (Continued)",icon:"05",questions:[
+  {id:"s5",section:"Functional Experience (Continued)",icon:"06",questions:[
     {id:"proc",type:"single",text:"Contracting or procurement experience",hint:"How involved were you in buying goods/services or managing contracts? Includes GPC/IMPAC card, contracting officer (KO) duties, or running acquisition programs.",opts:["None","Requested purchases or managed property","Small purchase/micro-purchase authority","Formal contracting officer or KO role","Managed complex acquisition programs"]},
     {id:"em",type:"single",text:"Emergency management or emergency operations",opts:["None","Participated in exercises or responses","Led section-level emergency operations","Served in EOC, JOC, or crisis action team","Incident commander or senior EOC leader","Installation or theater emergency manager"]},
     {id:"pa",type:"single",text:"Public affairs, communications, or community relations",opts:["None","Prepared briefings and staff reports","Managed public affairs or media relations","Civil affairs, civic action, or community relations operations (CA/CMOC)","Command spokesperson or PAO at senior level"]},
     {id:"infra",type:"single",text:"Infrastructure, facilities, or public works",hint:"Experience running or maintaining physical assets \u2014 vehicle/equipment fleets, buildings and grounds, base civil engineering (CES/DPW/PWD), utilities, or construction projects.",opts:["None","Maintained equipment or vehicles","Facilities management or public works / DPW / PWD / CES role","Base / post / station / installation operations management","Civil engineering or construction project delivery","Base / post / station / garrison commander or commanding officer"]}
   ]},
-  {id:"s6",section:"Education & Credentials",icon:"06",questions:[
+  {id:"s6",section:"Education & Credentials",icon:"07",questions:[
     {id:"deg",type:"multi",text:"Degrees earned — select all that apply",hint:"Select all degrees you have completed, not just your highest.",opts:["High school / GED","Some college (no degree)","Associate degree","Bachelor’s degree","Master’s degree (MPA, MBA, MS, MA, etc.)","Juris Doctor (JD)","Doctoral degree (PhD, EdD, DPA, etc.)"]},
     {id:"fields",type:"multi",text:"Field(s) of study \u2014 select all that apply",opts:["Public administration / policy","Business administration / management","Finance, accounting, or economics","Engineering","Computer science, IT, or cybersecurity","Urban planning or land use","Emergency management or homeland security","Law","Healthcare, public health, or social work","Education or training","Other / not listed"]},
     {id:"certs",type:"multi",text:"Professional certifications currently held \u2014 select all that apply",opts:["PMP","CPA or CGFM","CPFO","SHRM-CP / SHRM-SCP / PHR / SPHR","AICP","CEM / AEM","ICMA-CM","CPM (Certified Public Manager)","CPPB / CPPO / NIGP-CPP","Security+, CISSP, or CISM","APWA CPWP-S/M or CPFP","State law enforcement POST","Firefighter / EMT / Paramedic credentials","PE or EIT (engineering license)","AAAE C.M. or A.A.E. (airport)","Commercial or private pilot license","USCG Merchant Mariner Credential (master/mate)","GISP (GIS Professional)","CMC / MMC (Municipal Clerk)","Lean Six Sigma (Green/Black Belt)","Other / not listed (commercial pilot, master\u2019s license, PE, etc.)","None of the above"],writeIn:true,writeInPlaceholder:"List your other certification(s)"}
   ]},
-  {id:"s7",section:"Career Interests",icon:"07",questions:[
+  {id:"s7",section:"Career Interests",icon:"08",questions:[
     {id:"style",type:"single",text:"Which best describes your preferred work environment?",opts:["Field operations and physical infrastructure","Administrative, analytical, or policy work","Direct public service and resident interaction","Executive leadership and organizational management","Technical specialization (IT, engineering, finance, etc.)","Blend of operations and management"]},
     {id:"interests",type:"multi",text:"Functional areas of greatest interest \u2014 select up to 4",opts:["Local government management","Finance, budget, or treasury","Human resources or labor relations","Economic development or housing","Planning and land use","Public works or infrastructure","Emergency management","Law enforcement or public safety administration","Fire service or EMS administration","Parks and recreation","Information technology","Procurement or contracting","Communications and public engagement","Clerk, records, or elections","Utilities (water, wastewater)","Airport or aviation management","Port, harbor, or maritime administration","Other"],max:4,writeIn:true,writeInPlaceholder:"Describe your other area of interest"},
     {id:"timeline",type:"single",text:"When do you plan to begin your local government career?",opts:["Already separated / civilian","Within 6 months","6–18 months","18 months to 3 years","3+ years out"]},
@@ -690,15 +693,13 @@ var STEPS=[
        "Open — I want the tool to recommend the best fit based on my background"
      ]}
   ]},
-  {id:"s8",section:"Goals & Aspirations",icon:"08",questions:[
+  {id:"s8",section:"Goals & Aspirations",icon:"09",questions:[
     {id:"goal",type:"single",text:"Long-term career goal in local government",opts:["Local Government Executive (City / Town Manager, County Administrator)","Department Director (Finance, HR, Public Works, etc.)","Assistant or Deputy Manager","Chief of Police or Fire Chief","City/County Engineer","CIO or Technology Director","I\u2019m not sure yet \u2014 I want to explore","Other senior leadership role"]},
     {id:"mgr",type:"single",text:"Interest in City/Town Manager or County Administrator role",opts:["Yes \u2014 that\u2019s my primary goal","Yes \u2014 as a longer-term goal after gaining experience","Maybe \u2014 I\u2019m open to it","No \u2014 I prefer departmental leadership","No \u2014 I prefer operational or technical roles"]},
-    {id:"reloc",type:"single",text:"Willingness to relocate for the right opportunity",opts:["Yes \u2014 anywhere","Yes \u2014 regionally (within a few states)","Prefer to stay in my target state","No \u2014 location is fixed"]}
-  ]},
-  {id:"s9",section:"Resume Upload",icon:"09",questions:[
-    {id:"resume",type:"resume",label:"Upload your resume for richer analysis"}
+    {id:"reloc",type:"single",text:"Willingness to relocate for the right opportunity",opts:["Yes \u2014 anywhere","Yes \u2014 regionally (within a few states)","Prefer to stay in my target state(s)","No \u2014 location is fixed"]}
   ]}
 ];
+
 
 function startAssessment(){
   document.getElementById("intro-screen").style.display="none";
@@ -780,6 +781,9 @@ function renderStep(){
     }
     html+="</div>";
   });
+  if(step===STEPS.length-1){
+    html+='<div style="margin-top:4px;padding:12px 14px;background:#fff8e1;border:1px solid #f0d78c;border-radius:8px;font-size:12.5px;color:#7a5c00;line-height:1.5"><strong>Before you click Generate:</strong> building your full resume-enhanced report can take up to a minute. Please stay on this page until it finishes \u2014 don\u2019t refresh or close the tab.</div>';
+  }
   html+="</div></div>";
   document.getElementById("question-area").innerHTML=html;
   var backBtn=document.getElementById("btn-back");
@@ -905,10 +909,10 @@ function showLoading(){
   document.getElementById("progress-strip").style.display="none";
   document.getElementById("loading-wrap").classList.add("show");
   var msgs=[
+    "This can take up to a minute for a full resume-enhanced report \u2014 please don't close this page\u2026",
     "Mapping your military experience to 24 local government career pathways\u2026",
     "Reading your resume and identifying actual roles held\u2026",
     "Scoring qualification fit and checking labor market data\u2026",
-    "This can take up to a minute for a full resume-enhanced report \u2014 please don't close this page\u2026",
     "Generating your personalized career and credential report\u2026",
     "Almost there \u2014 finalizing your rankings and certification pathways\u2026"
   ];
