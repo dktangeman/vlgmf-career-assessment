@@ -37,11 +37,12 @@ function callAnthropic(apiKey, baseUrl, requestBody) {
       res.on('end', () => resolve({ status: res.statusCode, body: data }));
     });
     req.on('error', reject);
-    // Background Functions can run up to 15 minutes; 110s is generous
-    // headroom for a single Claude report-generation call.
-    req.setTimeout(110000, () => {
+    // Background Functions can run up to 15 minutes; 170s is generous
+    // headroom for a single Claude report-generation call, while staying
+    // comfortably under the client's poll window (see pollForResult).
+    req.setTimeout(170000, () => {
       req.destroy();
-      reject(new Error('Timeout after 110s'));
+      reject(new Error('Timeout after 170s'));
     });
     req.write(payload);
     req.end();
